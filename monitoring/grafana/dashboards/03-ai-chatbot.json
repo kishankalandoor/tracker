@@ -1,0 +1,84 @@
+{
+  "uid": "trackos-ai",
+  "title": "TrackOS — AI & Chatbot",
+  "tags": ["trackos", "ai"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "refresh": "30s",
+  "panels": [
+    {
+      "id": 1, "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+      "type": "stat", "title": "Total AI Generations",
+      "datasource": {"uid": "prometheus"},
+      "targets": [{"expr": "sum(increase(ai_generation_requests_total{app=\"trackos\"}[1h]))", "legendFormat": "schemas"}],
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"},
+      "fieldConfig": {"defaults": {"color": {"fixedColor": "purple", "mode": "fixed"}}}
+    },
+    {
+      "id": 2, "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0},
+      "type": "stat", "title": "Total Routines Generated",
+      "datasource": {"uid": "prometheus"},
+      "targets": [{"expr": "sum(increase(ai_routine_requests_total{app=\"trackos\"}[1h]))", "legendFormat": "routines"}],
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"},
+      "fieldConfig": {"defaults": {"color": {"fixedColor": "green", "mode": "fixed"}}}
+    },
+    {
+      "id": 3, "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0},
+      "type": "stat", "title": "Chatbot Messages Sent",
+      "datasource": {"uid": "prometheus"},
+      "targets": [{"expr": "sum(increase(chatbot_messages_total{app=\"trackos\"}[1h]))", "legendFormat": "messages"}],
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"},
+      "fieldConfig": {"defaults": {"color": {"fixedColor": "blue", "mode": "fixed"}}}
+    },
+    {
+      "id": 4, "gridPos": {"h": 4, "w": 6, "x": 18, "y": 0},
+      "type": "stat", "title": "AI Error Rate",
+      "datasource": {"uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(application_errors_total{type=~\"ai_.*\"}[5m]))", "legendFormat": "errors/s"}],
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"},
+      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "thresholds": {"steps": [{"color": "green", "value": 0}, {"color": "red", "value": 0.05}]}}}
+    },
+    {
+      "id": 5, "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
+      "type": "timeseries", "title": "AI Latency (Schema/Routine)",
+      "datasource": {"uid": "prometheus"},
+      "targets": [
+        {"expr": "histogram_quantile(0.50, sum(rate(ai_generation_duration_seconds_bucket{app=\"trackos\"}[5m])) by (le))", "legendFormat": "P50"},
+        {"expr": "histogram_quantile(0.95, sum(rate(ai_generation_duration_seconds_bucket{app=\"trackos\"}[5m])) by (le))", "legendFormat": "P95"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "s"}},
+      "options": {"tooltip": {"mode": "multi"}}
+    },
+    {
+      "id": 6, "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4},
+      "type": "timeseries", "title": "Chatbot Latency",
+      "datasource": {"uid": "prometheus"},
+      "targets": [
+        {"expr": "histogram_quantile(0.50, sum(rate(chatbot_response_duration_seconds_bucket{app=\"trackos\"}[5m])) by (le))", "legendFormat": "P50"},
+        {"expr": "histogram_quantile(0.95, sum(rate(chatbot_response_duration_seconds_bucket{app=\"trackos\"}[5m])) by (le))", "legendFormat": "P95"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "s"}},
+      "options": {"tooltip": {"mode": "multi"}}
+    },
+    {
+      "id": 7, "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
+      "type": "timeseries", "title": "AI Success vs Failure Rate",
+      "datasource": {"uid": "prometheus"},
+      "targets": [
+        {"expr": "sum by(status) (rate(ai_generation_requests_total{app=\"trackos\"}[1m]))", "legendFormat": "Generations - {{status}}"},
+        {"expr": "sum by(status) (rate(ai_routine_requests_total{app=\"trackos\"}[1m]))", "legendFormat": "Routines - {{status}}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "reqps"}},
+      "options": {"tooltip": {"mode": "multi"}}
+    },
+    {
+      "id": 8, "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12},
+      "type": "logs", "title": "Recent AI & Chat Events (Loki)",
+      "datasource": {"uid": "loki"},
+      "targets": [
+        {"expr": "{container=\"universal_tracker_api\"} |~ \"\\\\[(AI|Chat|Routine)\\\\]\""}
+      ],
+      "options": {"showTime": true, "showLabels": false, "wrapLogMessage": true}
+    }
+  ]
+}

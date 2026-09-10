@@ -1,0 +1,71 @@
+{
+  "uid": "trackos-planners-auth",
+  "title": "TrackOS — Auth & Planners",
+  "tags": ["trackos", "business"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "refresh": "30s",
+  "panels": [
+    {
+      "id": 1, "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+      "type": "stat", "title": "Registrations",
+      "datasource": {"uid": "prometheus"},
+      "targets": [{"expr": "sum(increase(auth_events_total{app=\"trackos\",event=\"register\"}[1h]))", "legendFormat": "New Users"}],
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"},
+      "fieldConfig": {"defaults": {"color": {"fixedColor": "green", "mode": "fixed"}}}
+    },
+    {
+      "id": 2, "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0},
+      "type": "stat", "title": "Successful Logins",
+      "datasource": {"uid": "prometheus"},
+      "targets": [{"expr": "sum(increase(auth_events_total{app=\"trackos\",event=\"login_success\"}[1h]))", "legendFormat": "Logins"}],
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"},
+      "fieldConfig": {"defaults": {"color": {"fixedColor": "blue", "mode": "fixed"}}}
+    },
+    {
+      "id": 3, "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0},
+      "type": "stat", "title": "Failed Logins",
+      "datasource": {"uid": "prometheus"},
+      "targets": [{"expr": "sum(increase(auth_events_total{app=\"trackos\",event=\"login_failed\"}[1h]))", "legendFormat": "Failures"}],
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"},
+      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "thresholds": {"steps": [{"color": "green", "value": 0}, {"color": "red", "value": 5}]}}}
+    },
+    {
+      "id": 4, "gridPos": {"h": 4, "w": 6, "x": 18, "y": 0},
+      "type": "stat", "title": "Planners Created",
+      "datasource": {"uid": "prometheus"},
+      "targets": [{"expr": "sum(increase(planner_operations_total{app=\"trackos\",operation=~\"create.*\"}[1h]))", "legendFormat": "Planners"}],
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"},
+      "fieldConfig": {"defaults": {"color": {"fixedColor": "purple", "mode": "fixed"}}}
+    },
+    {
+      "id": 5, "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
+      "type": "timeseries", "title": "Planner Operations (CRUD)",
+      "datasource": {"uid": "prometheus"},
+      "targets": [
+        {"expr": "sum by(operation) (rate(planner_operations_total{app=\"trackos\"}[1m]))", "legendFormat": "{{operation}}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "ops"}},
+      "options": {"tooltip": {"mode": "multi"}}
+    },
+    {
+      "id": 6, "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4},
+      "type": "timeseries", "title": "Reminder Operations",
+      "datasource": {"uid": "prometheus"},
+      "targets": [
+        {"expr": "sum by(operation) (rate(reminder_operations_total{app=\"trackos\"}[1m]))", "legendFormat": "{{operation}}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "ops"}},
+      "options": {"tooltip": {"mode": "multi"}}
+    },
+    {
+      "id": 7, "gridPos": {"h": 8, "w": 24, "x": 0, "y": 12},
+      "type": "barchart", "title": "Auth Activity Rate",
+      "datasource": {"uid": "prometheus"},
+      "targets": [
+        {"expr": "sum by(event) (rate(auth_events_total{app=\"trackos\"}[5m]))", "legendFormat": "{{event}}"}
+      ],
+      "options": {"stacking": "normal"}
+    }
+  ]
+}

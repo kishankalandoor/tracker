@@ -1,0 +1,123 @@
+{
+  "uid": "trackos-api",
+  "title": "TrackOS — API Performance",
+  "tags": ["trackos", "api"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "refresh": "30s",
+  "templating": {
+    "list": [
+      {
+        "name": "route",
+        "type": "query",
+        "label": "Route",
+        "datasource": {"uid": "prometheus"},
+        "query": "label_values(http_requests_total{app=\"trackos\"}, route)",
+        "multi": true,
+        "includeAll": true,
+        "current": {"value": "$__all", "text": "All"}
+      },
+      {
+        "name": "method",
+        "type": "query",
+        "label": "Method",
+        "datasource": {"uid": "prometheus"},
+        "query": "label_values(http_requests_total{app=\"trackos\"}, method)",
+        "multi": true,
+        "includeAll": true
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1, "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+      "type": "stat", "title": "Total Requests (1m)",
+      "datasource": {"uid": "prometheus"},
+      "targets": [{"expr": "sum(increase(http_requests_total{app=\"trackos\",route=~\"$route\",method=~\"$method\"}[1m]))", "legendFormat": "requests"}],
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"},
+      "fieldConfig": {"defaults": {"color": {"fixedColor": "blue", "mode": "fixed"}}}
+    },
+    {
+      "id": 2, "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0},
+      "type": "stat", "title": "4xx Errors (1m)",
+      "datasource": {"uid": "prometheus"},
+      "targets": [{"expr": "sum(increase(http_requests_total{app=\"trackos\",status_code=~\"4..\",route=~\"$route\"}[1m]))", "legendFormat": "4xx"}],
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"},
+      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "thresholds": {"steps": [{"color": "green", "value": 0}, {"color": "orange", "value": 1}]}}}
+    },
+    {
+      "id": 3, "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0},
+      "type": "stat", "title": "5xx Errors (1m)",
+      "datasource": {"uid": "prometheus"},
+      "targets": [{"expr": "sum(increase(http_requests_total{app=\"trackos\",status_code=~\"5..\",route=~\"$route\"}[1m]))", "legendFormat": "5xx"}],
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"},
+      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "thresholds": {"steps": [{"color": "green", "value": 0}, {"color": "red", "value": 1}]}}}
+    },
+    {
+      "id": 4, "gridPos": {"h": 4, "w": 6, "x": 18, "y": 0},
+      "type": "stat", "title": "Error Rate %",
+      "datasource": {"uid": "prometheus"},
+      "targets": [{"expr": "100 * sum(rate(http_requests_total{app=\"trackos\",status_code=~\"[45]..\"}[5m])) / sum(rate(http_requests_total{app=\"trackos\"}[5m]))", "legendFormat": "error%"}],
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"},
+      "fieldConfig": {"defaults": {"unit": "percent", "color": {"mode": "thresholds"}, "thresholds": {"steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 1}, {"color": "red", "value": 5}]}}}
+    },
+    {
+      "id": 5, "gridPos": {"h": 8, "w": 24, "x": 0, "y": 4},
+      "type": "timeseries", "title": "Request Rate by Route",
+      "datasource": {"uid": "prometheus"},
+      "targets": [
+        {"expr": "sum by(route, method) (rate(http_requests_total{app=\"trackos\",route=~\"$route\",method=~\"$method\"}[1m]))", "legendFormat": "{{method}} {{route}}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "reqps"}},
+      "options": {"tooltip": {"mode": "multi"}, "legend": {"displayMode": "table", "placement": "right"}}
+    },
+    {
+      "id": 6, "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
+      "type": "timeseries", "title": "P95 Latency by Route",
+      "datasource": {"uid": "prometheus"},
+      "targets": [
+        {"expr": "histogram_quantile(0.95, sum by(route, le) (rate(http_request_duration_seconds_bucket{app=\"trackos\",route=~\"$route\"}[5m])))", "legendFormat": "P95 {{route}}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "s"}},
+      "options": {"tooltip": {"mode": "multi"}}
+    },
+    {
+      "id": 7, "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12},
+      "type": "timeseries", "title": "Error Rate by Route",
+      "datasource": {"uid": "prometheus"},
+      "targets": [
+        {"expr": "sum by(route, status_code) (rate(http_requests_total{app=\"trackos\",status_code=~\"[45]..\",route=~\"$route\"}[1m]))", "legendFormat": "{{status_code}} {{route}}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "reqps"}},
+      "options": {"tooltip": {"mode": "multi"}}
+    },
+    {
+      "id": 8, "gridPos": {"h": 8, "w": 24, "x": 0, "y": 20},
+      "type": "table", "title": "Top Slowest Routes (P95)",
+      "datasource": {"uid": "prometheus"},
+      "targets": [
+        {"expr": "sort_desc(histogram_quantile(0.95, sum by(route, le) (rate(http_request_duration_seconds_bucket{app=\"trackos\"}[5m]))))", "legendFormat": "{{route}}", "instant": true, "format": "table"}
+      ],
+      "transformations": [{"id": "sortBy", "options": {"fields": [{"displayName": "Value", "desc": true}]}}]
+    },
+    {
+      "id": 9, "gridPos": {"h": 6, "w": 12, "x": 0, "y": 28},
+      "type": "timeseries", "title": "Application Errors by Type",
+      "datasource": {"uid": "prometheus"},
+      "targets": [
+        {"expr": "sum by(type, route) (rate(application_errors_total{app=\"trackos\"}[5m]))", "legendFormat": "{{type}} — {{route}}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "reqps"}},
+      "options": {"tooltip": {"mode": "multi"}}
+    },
+    {
+      "id": 10, "gridPos": {"h": 6, "w": 12, "x": 12, "y": 28},
+      "type": "piechart", "title": "Request Distribution by Method",
+      "datasource": {"uid": "prometheus"},
+      "targets": [
+        {"expr": "sum by(method) (increase(http_requests_total{app=\"trackos\"}[1h]))", "legendFormat": "{{method}}"}
+      ],
+      "options": {"pieType": "donut", "displayLabels": ["name", "percent"]}
+    }
+  ]
+}

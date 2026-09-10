@@ -1,0 +1,102 @@
+{
+  "uid": "trackos-overview",
+  "title": "TrackOS — Overview",
+  "tags": ["trackos"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "refresh": "30s",
+  "panels": [
+    {
+      "id": 1, "gridPos": {"h": 4, "w": 4, "x": 0, "y": 0},
+      "type": "stat", "title": "Request Rate (req/s)",
+      "datasource": {"uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(http_requests_total{app=\"trackos\"}[1m]))", "legendFormat": "req/s"}],
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"},
+      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "thresholds": {"steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 10}, {"color": "red", "value": 50}]}}}
+    },
+    {
+      "id": 2, "gridPos": {"h": 4, "w": 4, "x": 4, "y": 0},
+      "type": "stat", "title": "Error Rate (5xx)",
+      "datasource": {"uid": "prometheus"},
+      "targets": [{"expr": "sum(rate(http_requests_total{app=\"trackos\",status_code=~\"5..\"}[1m]))", "legendFormat": "errors/s"}],
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"},
+      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "thresholds": {"steps": [{"color": "green", "value": 0}, {"color": "red", "value": 0.01}]}}}
+    },
+    {
+      "id": 3, "gridPos": {"h": 4, "w": 4, "x": 8, "y": 0},
+      "type": "stat", "title": "P95 Latency",
+      "datasource": {"uid": "prometheus"},
+      "targets": [{"expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{app=\"trackos\"}[5m])) by (le))", "legendFormat": "P95"}],
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"},
+      "fieldConfig": {"defaults": {"unit": "s", "color": {"mode": "thresholds"}, "thresholds": {"steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 0.5}, {"color": "red", "value": 2}]}}}
+    },
+    {
+      "id": 4, "gridPos": {"h": 4, "w": 4, "x": 12, "y": 0},
+      "type": "stat", "title": "Active Requests",
+      "datasource": {"uid": "prometheus"},
+      "targets": [{"expr": "http_active_requests{app=\"trackos\"}", "legendFormat": "active"}],
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"},
+      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "thresholds": {"steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 20}, {"color": "red", "value": 100}]}}}
+    },
+    {
+      "id": 5, "gridPos": {"h": 4, "w": 4, "x": 16, "y": 0},
+      "type": "stat", "title": "Node.js Heap Used",
+      "datasource": {"uid": "prometheus"},
+      "targets": [{"expr": "nodejs_heap_size_used_bytes{app=\"trackos\"}", "legendFormat": "heap"}],
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"},
+      "fieldConfig": {"defaults": {"unit": "bytes", "color": {"mode": "thresholds"}, "thresholds": {"steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 200000000}, {"color": "red", "value": 500000000}]}}}
+    },
+    {
+      "id": 6, "gridPos": {"h": 4, "w": 4, "x": 20, "y": 0},
+      "type": "stat", "title": "Event Loop Lag",
+      "datasource": {"uid": "prometheus"},
+      "targets": [{"expr": "nodejs_eventloop_lag_seconds{app=\"trackos\"}", "legendFormat": "lag"}],
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"},
+      "fieldConfig": {"defaults": {"unit": "s", "color": {"mode": "thresholds"}, "thresholds": {"steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 0.1}, {"color": "red", "value": 0.5}]}}}
+    },
+    {
+      "id": 7, "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
+      "type": "timeseries", "title": "HTTP Request Rate by Status",
+      "datasource": {"uid": "prometheus"},
+      "targets": [
+        {"expr": "sum by(status_code) (rate(http_requests_total{app=\"trackos\"}[1m]))", "legendFormat": "{{status_code}}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "reqps"}},
+      "options": {"tooltip": {"mode": "multi"}}
+    },
+    {
+      "id": 8, "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4},
+      "type": "timeseries", "title": "HTTP Request Latency (P50 / P95 / P99)",
+      "datasource": {"uid": "prometheus"},
+      "targets": [
+        {"expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket{app=\"trackos\"}[5m])) by (le))", "legendFormat": "P50"},
+        {"expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{app=\"trackos\"}[5m])) by (le))", "legendFormat": "P95"},
+        {"expr": "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{app=\"trackos\"}[5m])) by (le))", "legendFormat": "P99"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "s"}},
+      "options": {"tooltip": {"mode": "multi"}}
+    },
+    {
+      "id": 9, "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
+      "type": "timeseries", "title": "Node.js Memory",
+      "datasource": {"uid": "prometheus"},
+      "targets": [
+        {"expr": "nodejs_heap_size_used_bytes{app=\"trackos\"}", "legendFormat": "Heap Used"},
+        {"expr": "nodejs_heap_size_total_bytes{app=\"trackos\"}", "legendFormat": "Heap Total"},
+        {"expr": "nodejs_external_memory_bytes{app=\"trackos\"}", "legendFormat": "External"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "bytes"}},
+      "options": {"tooltip": {"mode": "multi"}}
+    },
+    {
+      "id": 10, "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12},
+      "type": "timeseries", "title": "GC Duration",
+      "datasource": {"uid": "prometheus"},
+      "targets": [
+        {"expr": "sum by(gc_type) (rate(nodejs_gc_duration_seconds_sum{app=\"trackos\"}[1m]))", "legendFormat": "{{gc_type}}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "s"}},
+      "options": {"tooltip": {"mode": "multi"}}
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "uid": "trackos-frontend",
+  "title": "TrackOS — Frontend & Nginx",
+  "tags": ["trackos", "frontend"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "refresh": "10s",
+  "panels": [
+    {
+      "id": 1, "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+      "type": "stat", "title": "Nginx Active Connections",
+      "datasource": {"uid": "prometheus"},
+      "targets": [{"expr": "nginx_connections_active", "legendFormat": "Active"}],
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"},
+      "fieldConfig": {"defaults": {"color": {"fixedColor": "green", "mode": "fixed"}}}
+    },
+    {
+      "id": 2, "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0},
+      "type": "stat", "title": "Nginx Requests/sec",
+      "datasource": {"uid": "prometheus"},
+      "targets": [{"expr": "rate(nginx_http_requests_total[1m])", "legendFormat": "Req/s"}],
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background"},
+      "fieldConfig": {"defaults": {"color": {"fixedColor": "blue", "mode": "fixed"}}}
+    },
+    {
+      "id": 3, "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "type": "timeseries", "title": "Nginx Connections",
+      "datasource": {"uid": "prometheus"},
+      "targets": [
+        {"expr": "nginx_connections_active", "legendFormat": "Active"},
+        {"expr": "nginx_connections_reading", "legendFormat": "Reading"},
+        {"expr": "nginx_connections_writing", "legendFormat": "Writing"},
+        {"expr": "nginx_connections_waiting", "legendFormat": "Waiting"}
+      ],
+      "options": {"tooltip": {"mode": "multi"}}
+    },
+    {
+      "id": 4, "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
+      "type": "timeseries", "title": "Nginx Errors (from Logs)",
+      "datasource": {"uid": "loki"},
+      "targets": [
+        {"expr": "sum by(nginx_error) (rate({container=\"universal_tracker_web\"} |~ \"error|crit|alert|emerg\" [1m]))", "legendFormat": "Error Rate"}
+      ],
+      "options": {"tooltip": {"mode": "multi"}}
+    },
+    {
+      "id": 5, "gridPos": {"h": 8, "w": 24, "x": 0, "y": 12},
+      "type": "logs", "title": "Frontend Access/Error Logs",
+      "datasource": {"uid": "loki"},
+      "targets": [
+        {"expr": "{container=\"universal_tracker_web\"}"}
+      ],
+      "options": {"showTime": true, "showLabels": false, "wrapLogMessage": true}
+    }
+  ]
+}

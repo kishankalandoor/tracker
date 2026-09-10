@@ -1,0 +1,1 @@
+{"version":3,"file":"generateToken.js","sourceRoot":"","sources":["generateToken.ts"],"names":[],"mappings":";;;;;AAAA,gEAA+B;AAE/B,MAAM,aAAa,GAAG,CAAC,EAAU,EAAE,EAAE;IACnC,OAAO,sBAAG,CAAC,IAAI,CAAC,EAAE,EAAE,EAAE,EAAE,OAAO,CAAC,GAAG,CAAC,UAAU,IAAI,iBAAiB,EAAE;QACnE,SAAS,EAAE,KAAK;KACjB,CAAC,CAAC;AACL,CAAC,CAAC;kBAEa,aAAa"}

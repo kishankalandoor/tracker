@@ -1,0 +1,45 @@
+{
+  "name": "TrackOS — Universal Planner",
+  "short_name": "TrackOS",
+  "description": "AI-powered tracker, routines, and planner with calendar — your all-in-one productivity hub.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0e0e1a",
+  "theme_color": "#7c3aed",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "shortcuts": [
+    {
+      "name": "My Planners",
+      "short_name": "Planners",
+      "url": "/planners",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Template Library",
+      "short_name": "Templates",
+      "url": "/templates",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Calendar",
+      "short_name": "Calendar",
+      "url": "/calendar",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

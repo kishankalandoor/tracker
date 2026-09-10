@@ -1,0 +1,52 @@
+{
+  "uid": "trackos-logs",
+  "title": "TrackOS — Log Explorer",
+  "tags": ["trackos", "logs"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "refresh": "10s",
+  "templating": {
+    "list": [
+      {
+        "name": "service",
+        "type": "query",
+        "label": "Service",
+        "datasource": {"uid": "loki"},
+        "query": "label_values(service)",
+        "multi": true,
+        "includeAll": true,
+        "current": {"value": "$__all", "text": "All"}
+      },
+      {
+        "name": "level",
+        "type": "query",
+        "label": "Log Level",
+        "datasource": {"uid": "loki"},
+        "query": "label_values(level)",
+        "multi": true,
+        "includeAll": true,
+        "current": {"value": "$__all", "text": "All"}
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1, "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0},
+      "type": "timeseries", "title": "Log Volume by Service",
+      "datasource": {"uid": "loki"},
+      "targets": [
+        {"expr": "sum by(service) (rate({service=~\"$service\"}[1m]))", "legendFormat": "{{service}}"}
+      ],
+      "options": {"tooltip": {"mode": "multi"}}
+    },
+    {
+      "id": 2, "gridPos": {"h": 16, "w": 24, "x": 0, "y": 8},
+      "type": "logs", "title": "Application Logs",
+      "datasource": {"uid": "loki"},
+      "targets": [
+        {"expr": "{service=~\"$service\", level=~\"$level\"}"}
+      ],
+      "options": {"showTime": true, "showLabels": true, "wrapLogMessage": true, "sortOrder": "Descending"}
+    }
+  ]
+}
