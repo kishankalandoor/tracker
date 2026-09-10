@@ -1,25 +1,10 @@
 <div align="center">
 
-# 🌌 TrackOS (Universal Tracker)
-**An AI-Powered Habit, Routine, and Planner Ecosystem**
-
-[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
-[![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)](https://vitejs.dev/)
-[![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
-[![Docker](https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
-[![Grafana](https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white)](https://grafana.com/)
-
-[**Explore Documentation**](#-comprehensive-documentation) • [**Quick Start**](#-quick-start) • [**Architecture**](#-architecture--stack)
-
-</div>
-
 ---
 
 ## 📖 Overview
 
-**TrackOS** is a comprehensive, AI-native productivity suite designed to adapt to any tracking need. Unlike rigid habit trackers, TrackOS allows users to define custom data schemas on the fly using AI, build complex layered routines, and manage rich-text planners. 
+**TrackOS** is a comprehensive, AI-native productivity suite designed to adapt to any tracking need. Unlike rigid habit trackers, TrackOS allows users to define custom data schemas on the fly using AI, build complex layered routines, and manage rich-text planners.
 
 The entire stack is built for production readiness, wrapped in **Docker**, and heavily instrumented with a state-of-the-art **Prometheus, Loki, and Grafana** observability stack.
 
@@ -38,34 +23,57 @@ The entire stack is built for production readiness, wrapped in **Docker**, and h
 
 ## 📸 Screenshots
 
+![1789060802107](image/README/1789060802107.png)
+
+![1789060742273](image/README/1789060742273.png)
+
+![1789060718506](image/README/1789060718506.png)
+
 <div align="center">
   <img src="docs/assets/dashboard.png" alt="Dashboard" width="48%">
   <img src="docs/assets/login.png" alt="Login" width="48%">
 </div>
 
----
+![1789060263610](image/README/1789060263610.png)
+
+![1789060594947](image/README/1789060594947.png)
+
+![1789060281183](image/README/1789060281183.png)
+
+![1789060293845](image/README/1789060293845.png)
+
+![1789060304802](image/README/1789060304802.png)
+
+
+![1789060579383](image/README/1789060579383.png)
+
+
 
 ## 📚 Comprehensive Documentation
 
-The `docs/` directory contains in-depth documentation covering every aspect of the system. 
+The `docs/` directory contains in-depth documentation covering every aspect of the system.
 
 ### 🏗 Architecture & Design
+
 - **[System Architecture](docs/ARCHITECTURE.md)**: High-level overview of the MERN architecture, Docker networking, and component boundaries.
 - **[Database Schema](docs/DATABASE.md)**: Detailed breakdown of the MongoDB collections (Trackers, Entries, Planners, Routines, etc).
 - **[Design Decisions](docs/DECISIONS.md)**: Rationale behind key technical choices (e.g., dynamic vs static schemas, observability stack).
 - **[AI Integration](docs/AI_INTEGRATION.md)**: How the OmniRoute/Gemini LLM pipeline is structured for schemas and chat.
 
 ### 🚀 Usage & Operations
+
 - **[Developer Guide](docs/DEVELOPER_GUIDE.md)**: Setup, standard practices, and UI/UX conventions.
 - **[API Reference](docs/API.md)**: Exhaustive list of REST endpoints and authentication flow.
 - **[User Flow](docs/USERFLOW.md)**: The end-to-end journey of a user moving through the application.
 
 ### 📈 Monitoring & Deployment
+
 - **[Grafana Observability Stack](docs/GRAFANA.md)**: Guide to the PLG stack (Prometheus, Loki, Grafana), custom dashboards, and metrics.
 - **[Docker Deployment](docs/DEPLOYMENT.md)**: Local and production Docker Compose documentation.
 - **[AWS EC2 Guide](docs/AWS_EC2_DEPLOYMENT.md)**: Step-by-step instructions for deploying to AWS EC2.
 
 ### 📝 Project Scope
+
 - **[Submission Details](docs/SUBMISSION.md)**: Project handover and assignment requirements verification.
 - **[MVP Scope](docs/MVP.md)** & **[Current State](docs/CURRENT_STATE.md)**: Roadmap and current implementation status.
 
@@ -74,6 +82,7 @@ The `docs/` directory contains in-depth documentation covering every aspect of t
 ## 🛠 Architecture & Stack
 
 **Frontend**:
+
 - React 18, Vite, TypeScript
 - Zustand (State Management)
 - Tailwind-like Utility CSS (Custom `index.css`)
@@ -81,6 +90,7 @@ The `docs/` directory contains in-depth documentation covering every aspect of t
 - React Router v6
 
 **Backend**:
+
 - Node.js & Express.js
 - TypeScript
 - MongoDB & Mongoose
@@ -88,6 +98,7 @@ The `docs/` directory contains in-depth documentation covering every aspect of t
 - Prom-client (Metrics instrumentation)
 
 **Observability & Infrastructure**:
+
 - Docker & Docker Compose
 - Nginx (Reverse Proxy)
 - Prometheus (Time-series metrics)
@@ -101,13 +112,16 @@ The `docs/` directory contains in-depth documentation covering every aspect of t
 Ensure you have [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) installed.
 
 ### 1. Clone the repository
+
 ```bash
 git clone https://github.com/kishankalandoor/tracker.git
 cd tracker
 ```
 
 ### 2. Configure Environment Variables
+
 Create a `.env` file in the `backend/` directory:
+
 ```env
 PORT=5000
 NODE_ENV=development
@@ -116,12 +130,15 @@ JWT_SECRET=your_super_secret_key_123
 ```
 
 ### 3. Spin up the cluster
+
 Build and start the full stack (Frontend, Backend, Database, and 5 Monitoring Services):
+
 ```bash
 docker compose up -d --build
 ```
 
 ### 4. Access the Application
+
 - **TrackOS Web App**: [http://localhost](http://localhost) (or port `80`)
 - **Backend API**: [http://localhost:5000](http://localhost:5000)
 - **Grafana Dashboards**: [http://localhost:3000](http://localhost:3000) *(User: `admin`, Pass: `admin`)*
