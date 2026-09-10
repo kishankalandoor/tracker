@@ -36,6 +36,15 @@ The entire stack is built for production readiness, wrapped in **Docker**, and h
 
 ---
 
+## 📸 Screenshots
+
+<div align="center">
+  <img src="docs/assets/dashboard.png" alt="Dashboard" width="48%">
+  <img src="docs/assets/login.png" alt="Login" width="48%">
+</div>
+
+---
+
 ## 📚 Comprehensive Documentation
 
 The `docs/` directory contains in-depth documentation covering every aspect of the system. 
