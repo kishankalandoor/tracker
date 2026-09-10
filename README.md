@@ -174,5 +174,5 @@ docker compose up -d --build
 ---
 
 <div align="center">
-  <i>Built with ❤️ for modern productivity.</i>
+  <i>For tech consultancy, strategic AI integrations, or to schedule a discovery session, feel free to reach out at kishankalandoor.com</i>
 </div>
